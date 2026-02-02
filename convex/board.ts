@@ -1,7 +1,16 @@
 import { v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { z } from "zod";
 import { safeString, safeId } from "./validators";
+
+export const get = query({
+  args: {
+    id: v.id("boards"),
+  },
+  handler: async (ctx, { id }) => {
+    return await ctx.db.get(id);
+  },
+});
 
 const images = Array.from(
   { length: 9 },

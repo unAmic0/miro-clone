@@ -1,10 +1,10 @@
+import { useOrganization } from "@clerk/nextjs";
+import { Star } from "lucide-react";
+import { toast } from "sonner";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { useApiMutation } from "@/hooks/useApiMutation";
 import { cn } from "@/lib/utils";
-import { useOrganization } from "@clerk/nextjs";
-import { Star } from "lucide-react";
-import { toast } from "sonner";
 
 interface Props {
   title: string;
@@ -43,6 +43,7 @@ export const Footer = ({
         {authourLabel}, {createdAtLabel}
       </p>
       <button
+        type="button"
         onClick={handleStarClick}
         className="absolute hover:bg-blue-200 rounded-sm p-1 right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 duration-300"
       >

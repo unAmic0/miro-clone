@@ -5,7 +5,7 @@ interface Props {
     boardId: string;
   };
 }
-const BoardPage = ({ params }: Props) => {
+const BoardPage = () => {
   return <Canvas />;
 };
 

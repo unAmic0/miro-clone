@@ -1,17 +1,19 @@
 "use client";
-import Link from "next/link";
-import Image from "next/image";
-import { formatDistanceToNow } from "date-fns";
+
 import { useAuth } from "@clerk/nextjs";
+import { formatDistanceToNow } from "date-fns";
+import { MoreHorizontal } from "lucide-react";
+import Image from "next/image";
+import { Actions } from "@/components/Actions";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Overlay } from "./Overlay";
+import type { Id } from "@/convex/_generated/dataModel";
 import { Footer } from "./Footer";
-import { Actions } from "./Actions";
+import { Overlay } from "./Overlay";
 
 interface Props {
   title: string;
   imgUrl: string;
-  id: string;
+  id: Id<"boards">;
   creationTime: number;
   authorId: string;
   authoutName: string;
@@ -38,8 +40,9 @@ export const BoardCard = ({
         <Image fill src={imgUrl} alt="title" className="p-2" />
         <Overlay id={id} />
       </div>
-
-      <Actions id={id} />
+      <Actions id={id}>
+        <MoreHorizontal className="absolute right-5 top-4 opacity-0 group-hover:opacity-100 text-white hover:text-gray-300 duration-300" />
+      </Actions>
       <Footer
         title={title}
         authourLabel={authourLabel}
@@ -53,6 +56,6 @@ export const BoardCard = ({
 
 BoardCard.Skeleton = () => {
   return (
-    <Skeleton className="size-full aspect-[100/127] border rounded-2xl border-transparent" />
+    <Skeleton className="size-full aspect-100/127 border rounded-2xl border-transparent" />
   );
 };
