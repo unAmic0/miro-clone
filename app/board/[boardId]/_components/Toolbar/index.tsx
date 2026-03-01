@@ -26,7 +26,7 @@ const Toolbar = ({ canvasState, setCanvasState }: Props) => {
   const { canUndo, canRedo, undo, redo } = useHistory();
 
   return (
-    <nav className="flex select-none flex-col gap-3 absolute top-1/2 -translate-y-1/2 left-2">
+    <nav className="flex z-10 select-none flex-col gap-3 absolute top-1/2 -translate-y-1/2 left-2">
       <section className="flex flex-col bg-white shadow-2xl shadow-black p-1 gap-y-1">
         <ToolButton
           icon={MousePointer2}

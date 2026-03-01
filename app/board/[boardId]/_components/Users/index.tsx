@@ -19,7 +19,7 @@ const Users = () => {
   const hiddenUsers = others.slice(MAX_SHOWN_USERS - 1);
 
   return (
-    <div className="absolute top-2 right-3 bg-white shadow-2xl p-1.5 rounded-sm shadow-black flex gap-x-2">
+    <div className="absolute top-2 z-10 right-3 bg-white shadow-2xl p-1.5 rounded-sm shadow-black flex gap-x-2">
       {/*TODO: fix the name*/}
       <UserLogo logo={me.info.picture} name="You" borderColor="white" />
       {others.slice(0, MAX_SHOWN_USERS - 1).map((other) => (

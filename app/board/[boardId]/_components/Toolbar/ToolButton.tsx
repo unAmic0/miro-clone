@@ -1,6 +1,6 @@
 import { Hint } from "@/_components/Hint";
 import { cn } from "@/lib/utils";
-import type { Dispatch, FC, SetStateAction } from "react";
+import type { FC } from "react";
 import type { LucideIcon } from "lucide-react";
 
 interface Props {

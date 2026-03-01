@@ -27,7 +27,7 @@ const Info = ({ boardId }: Props) => {
   if (!data) return <Info.Skeleton />;
 
   return (
-    <aside className="absolute group top-2 left-2 bg-white shadow-2xl p-2 px-2.5 rounded-sm shadow-black flex items-center justify-center">
+    <aside className="absolute z-10 group top-2 left-2 bg-white shadow-2xl p-2 px-2.5 rounded-sm shadow-black flex items-center justify-center">
       <button type="button">
         <Link href="/" className="flex items-center gap-1">
           <Image src="/logo.svg" width={40} height={40} alt="company logo" />
