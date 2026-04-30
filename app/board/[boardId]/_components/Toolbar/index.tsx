@@ -12,18 +12,14 @@ import {
   Redo,
 } from "lucide-react";
 import { ToolButton } from "./ToolButton";
-import type { Dispatch, SetStateAction } from "react";
-import type { CanvasState } from "@/types/canvas";
 import { CanvasMode, CanvasLayer } from "@/types/canvas";
 import { useHistory } from "@liveblocks/react/suspense";
+import { useCanvas } from "../../CanvasContext";
 
-interface Props {
-  canvasState: CanvasState;
-  setCanvasState: Dispatch<SetStateAction<CanvasState>>;
-}
-
-const Toolbar = ({ canvasState, setCanvasState }: Props) => {
+const Toolbar = () => {
   const { canUndo, canRedo, undo, redo } = useHistory();
+
+  const { canvasState, setCanvasState } = useCanvas();
 
   return (
     <nav className="flex z-10 select-none flex-col gap-3 absolute top-1/2 -translate-y-1/2 left-2">

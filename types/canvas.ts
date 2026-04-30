@@ -1,9 +1,21 @@
+import type { TinyColor } from "@ctrl/tinycolor";
+import type { Vector2d } from "konva/lib/types";
+
 export enum CanvasLayer {
   Ellipse,
   Rectangle,
   Path,
   Note,
   Text,
+}
+
+export interface LayerType {
+  id: string;
+  layerType: CanvasLayer;
+  position: Vector2d;
+  width: number;
+  height: number;
+  fill: TinyColor;
 }
 
 export enum CanvasMode {
@@ -23,7 +35,8 @@ export type CanvasState =
   | { mode: CanvasMode.Pencil }
   | { mode: CanvasMode.Inserting; layer: CanvasLayer };
 
-// export type CanvasState = {
-// mode: CanvasMode;
-// if (mode===CanvasMode.Inserting) layer: LayerType
-// };
+export interface Camera {
+  x: number;
+  y: number;
+  zoom: number;
+}
