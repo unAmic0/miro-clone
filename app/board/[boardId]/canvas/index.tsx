@@ -1,8 +1,10 @@
 "use client";
 
 import { TinyColor } from "@ctrl/tinycolor";
+import { useMutation } from "@liveblocks/react/suspense";
 import type { KonvaEventObject } from "konva/lib/Node";
 import type { Stage as StageType } from "konva/lib/Stage";
+import type { Vector2d } from "konva/lib/types";
 import { nanoid } from "nanoid";
 import { useCallback, useState } from "react";
 import { Layer, Stage } from "react-konva";
@@ -13,6 +15,7 @@ import {
   type LayerType,
 } from "@/types/canvas";
 import CanvasLayer from "../_components/CanvasLayer";
+import CursorsPresence from "../_components/CursorsPresence";
 import { useCanvas } from "../CanvasContext";
 import { Grid } from "./Grid";
 
@@ -68,6 +71,31 @@ const Canvas = () => {
     }
   }, []);
 
+  const setCursorPresence = useMutation(
+    ({ setMyPresence }, cursor: Vector2d) => {
+      setMyPresence({ cursor });
+    },
+    [],
+  );
+
+  const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {
+    const pointerPos = getAbsolutePointerPos(e.target.getStage());
+
+    if (pointerPos) {
+      setCursorPresence(pointerPos);
+      if (canvasState.mode === CanvasMode.Inserting && newLayer) {
+        setNewLayer(
+          (prev) =>
+            prev && {
+              ...prev,
+              width: pointerPos.x - prev.position.x,
+              height: pointerPos.y - prev.position.y,
+            },
+        );
+      }
+    }
+  };
+
   return (
     <Stage
       width={innerWidth}
@@ -81,21 +109,7 @@ const Canvas = () => {
       onDragMove={(e) => {
         setCamera((prev) => ({ ...prev, x: e.target.x(), y: e.target.y() }));
       }}
-      onMouseMove={(e) => {
-        if (canvasState.mode === CanvasMode.Inserting && newLayer) {
-          const endPostion = getAbsolutePointerPos(e.target.getStage());
-          if (endPostion) {
-            setNewLayer(
-              (prev) =>
-                prev && {
-                  ...prev,
-                  width: endPostion.x - prev.position.x,
-                  height: endPostion.y - prev.position.y,
-                },
-            );
-          }
-        }
-      }}
+      onMouseMove={handleMouseMove}
       onMouseDown={(e) => {
         if (e.evt.buttons === 4 || e.evt.buttons === 2) e.target.startDrag();
 
@@ -136,6 +150,7 @@ const Canvas = () => {
       <Layer listening={false}>
         <Grid camera={camera} width={innerWidth} height={innerHeight} />
       </Layer>
+      <CursorsPresence />
       {newLayer && <CanvasLayer layer={newLayer} />}
       {layers.map((layer) => (
         <CanvasLayer key={layer.id} layer={layer} />

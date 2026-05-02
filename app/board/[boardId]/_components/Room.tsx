@@ -1,4 +1,5 @@
 "use client";
+import { random } from "@ctrl/tinycolor";
 
 import {
   ClientSideSuspense,
@@ -10,8 +11,14 @@ import Loader from "./Loader";
 
 const Room = ({ children, id }: { children: ReactNode; id: string }) => {
   return (
-    <LiveblocksProvider authEndpoint="/api/liveblocks-auth">
-      <RoomProvider id={id}>
+    <LiveblocksProvider authEndpoint="/api/liveblocks-auth" throttle={16}>
+      <RoomProvider
+        initialPresence={{
+          cursor: null,
+          presenceColor: random().toHexString(),
+        }}
+        id={id}
+      >
         <ClientSideSuspense fallback={<Loader />}>
           {children}
         </ClientSideSuspense>
