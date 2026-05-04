@@ -1,6 +1,17 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
-export default clerkMiddleware();
+const isAuthRouter = createRouteMatcher(['/sign-in', '/sign-up'])
+
+export default clerkMiddleware(
+  async (auth, req) => {
+    const {userId} = await auth()
+    if (!userId && !isAuthRouter(req)) {
+      // NOTE: don't forget to change the url before deploy
+      return NextResponse.redirect(new URL('http://localhost:3000/sign-up'))
+    }
+}
+);
 
 export const config = {
 	matcher: [
