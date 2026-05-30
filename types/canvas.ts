@@ -1,6 +1,3 @@
-import type { TinyColor } from "@ctrl/tinycolor";
-import type { Vector2d } from "konva/lib/types";
-
 export enum CanvasLayer {
   Ellipse,
   Rectangle,
@@ -9,14 +6,14 @@ export enum CanvasLayer {
   Text,
 }
 
-export interface LayerType {
+export type TLayer = {
   id: string;
   layerType: CanvasLayer;
-  position: Vector2d;
+  position: { x: number; y: number };
   width: number;
   height: number;
-  fill: TinyColor;
-}
+  fill: string;
+};
 
 export enum CanvasMode {
   None,

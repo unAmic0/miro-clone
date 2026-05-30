@@ -1,23 +1,25 @@
 "use client";
 
-import { Skeleton } from "@/components/ui/skeleton";
+import { useCanRedo, useCanUndo, useHistory } from "@liveblocks/react/suspense";
 import {
-  MousePointer2,
-  TypeOutline,
-  StickyNote,
-  Square,
   Circle,
+  MousePointer2,
   Pencil,
-  Undo,
   Redo,
+  Square,
+  StickyNote,
+  TypeOutline,
+  Undo,
 } from "lucide-react";
-import { ToolButton } from "./ToolButton";
-import { CanvasMode, CanvasLayer } from "@/types/canvas";
-import { useHistory } from "@liveblocks/react/suspense";
+import { Skeleton } from "@/components/ui/skeleton";
+import { CanvasLayer, CanvasMode } from "@/types/canvas";
 import { useCanvas } from "../../CanvasContext";
+import { ToolButton } from "./ToolButton";
 
 const Toolbar = () => {
-  const { canUndo, canRedo, undo, redo } = useHistory();
+  const { undo, redo } = useHistory();
+  const canUndo = useCanUndo();
+  const canRedo = useCanRedo();
 
   const { canvasState, setCanvasState } = useCanvas();
 
@@ -104,13 +106,13 @@ const Toolbar = () => {
       <section className="bg-white flex flex-col shadow-2xl shadow-black">
         <ToolButton
           label="undo"
-          disabled={!canUndo()}
+          disabled={!canUndo}
           icon={Undo}
           handleClick={undo}
         />
         <ToolButton
           label="redo"
-          disabled={!canRedo()}
+          disabled={!canRedo}
           icon={Redo}
           handleClick={redo}
         />

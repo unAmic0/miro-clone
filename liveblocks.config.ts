@@ -1,3 +1,7 @@
+import type { LiveList, LiveObject } from "@liveblocks/node";
+import type { TLayer } from "@/types/canvas";
+
+//
 // Define Liveblocks types for your application
 // https://liveblocks.io/docs/api-reference/liveblocks-react#Typing-your-data
 declare global {
@@ -5,12 +9,14 @@ declare global {
     // Each user's Presence, for useMyPresence, useOthers, etc.
     Presence: {
       // Example, real-time cursor coordinates
-      cursor: {x: number, y: number} | null;
-      presenceColor: string
+      cursor: { x: number; y: number } | null;
+      presenceColor: string;
+      selection: string[];
     };
 
     // The Storage tree for the room, for useMutation, useStorage, etc.
     Storage: {
+      layers: LiveList<LiveObject<TLayer>>;
       // Example, a conflict-free list
       // animals: LiveList<string>;
     };

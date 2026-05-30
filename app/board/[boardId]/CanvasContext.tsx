@@ -1,14 +1,14 @@
 "use client";
 
-import { CanvasLayer, CanvasMode, type CanvasState } from "@/types/canvas";
 import {
   createContext,
-  useState,
-  useContext,
-  type ReactNode,
   type Dispatch,
+  type ReactNode,
   type SetStateAction,
+  useContext,
+  useState,
 } from "react";
+import { CanvasMode, type CanvasState } from "@/types/canvas";
 
 const CanvasContext = createContext<{
   canvasState: CanvasState;
@@ -22,8 +22,7 @@ const CanvasContext = createContext<{
 
 export const CanvasProvider = ({ children }: { children: ReactNode }) => {
   const [canvasState, setCanvasState] = useState<CanvasState>({
-    mode: CanvasMode.Inserting,
-    layer: CanvasLayer.Rectangle,
+    mode: CanvasMode.None,
   });
 
   return (
