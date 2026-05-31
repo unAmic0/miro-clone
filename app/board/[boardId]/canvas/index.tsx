@@ -23,6 +23,7 @@ import CanvasLayer from "../_components/CanvasLayer";
 import CursorsPresence from "../_components/CursorsPresence";
 import { useCanvas } from "../CanvasContext";
 import { Grid } from "./Grid";
+import OwnSelection from "../_components/OwnSelected";
 
 const ZOOM_SPEED = 1.1;
 const MAX_ZOOM = 3;
@@ -191,6 +192,7 @@ const Canvas = () => {
           selectionColor={selections[layer.id]}
         />
       ))}
+      <OwnSelection />
       <CursorsPresence />
     </Stage>
   );
