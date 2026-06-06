@@ -180,20 +180,20 @@ const Canvas = () => {
       }}
       onWheel={handleWheel}
     >
-      <Layer listening={false}>
+      <Layer>
         <Grid camera={camera} width={innerWidth} height={innerHeight} />
+        {layers.map((layer) => (
+          <CanvasLayer
+            handleLayerClick={(e) => handleLayerClick(layer.id, e)}
+            key={layer.id}
+            layer={layer}
+            selectionColor={selections[layer.id]}
+          />
+        ))}
+        {newLayer && <CanvasLayer layer={newLayer} />}
+        <OwnSelection />
+        <CursorsPresence />
       </Layer>
-      {newLayer && <CanvasLayer layer={newLayer} />}
-      {layers.map((layer) => (
-        <CanvasLayer
-          handleLayerClick={(e) => handleLayerClick(layer.id, e)}
-          key={layer.id}
-          layer={layer}
-          selectionColor={selections[layer.id]}
-        />
-      ))}
-      <OwnSelection />
-      <CursorsPresence />
     </Stage>
   );
 };

@@ -1,7 +1,7 @@
 "use client";
 
 import { useSelf, useStorage } from "@liveblocks/react/suspense";
-import { Layer, Rect } from "react-konva";
+import { Group, Rect } from "react-konva";
 import { setCursor } from "@/lib/utils";
 import { getMiniSquares } from "./getMiniSquares";
 
@@ -26,7 +26,7 @@ const OwnSelection = () => {
   });
 
   return (
-    <Layer>
+    <Group>
       <Rect
         x={position.x}
         y={position.y}
@@ -52,7 +52,7 @@ const OwnSelection = () => {
           />
         );
       })}
-    </Layer>
+    </Group>
   );
 };
 

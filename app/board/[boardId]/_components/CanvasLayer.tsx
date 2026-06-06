@@ -20,33 +20,29 @@ const CanvasLayer: FC<Props> = ({
   switch (layerType) {
     case CanvasLayerEnum.Rectangle:
       return (
-        <Layer onDragMove={cancelBubble} onDragStart={cancelBubble}>
-          <Rect
-            x={position.x}
-            y={position.y}
-            width={width}
-            height={height}
-            stroke={selectionColor}
-            fill={fill}
-            strokeWidth={2}
-            onClick={handleLayerClick}
-            draggable
-          />
-        </Layer>
+        <Rect
+          x={position.x}
+          y={position.y}
+          width={width}
+          height={height}
+          stroke={selectionColor}
+          fill={fill}
+          strokeWidth={2}
+          onClick={handleLayerClick}
+          draggable
+        />
       );
     case CanvasLayerEnum.Ellipse:
       return (
-        <Layer onDragMove={cancelBubble} onDragStart={cancelBubble}>
-          <Ellipse
-            x={position.x}
-            y={position.y}
-            radiusX={Math.abs(width)}
-            radiusY={Math.abs(height)}
-            stroke={fill}
-            onClick={handleLayerClick}
-            strokeWidth={2}
-          />
-        </Layer>
+        <Ellipse
+          x={position.x}
+          y={position.y}
+          radiusX={Math.abs(width)}
+          radiusY={Math.abs(height)}
+          stroke={fill}
+          onClick={handleLayerClick}
+          strokeWidth={2}
+        />
       );
   }
 };

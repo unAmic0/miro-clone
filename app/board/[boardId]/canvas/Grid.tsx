@@ -1,5 +1,5 @@
 import { Line } from "react-konva";
-import type { Camera } from ".";
+import type { Camera } from "@/types/canvas";
 
 const GRID_SIZE = 50;
 
