@@ -1,0 +1,139 @@
+// Bun Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`mini squares in the own selection get mini squares 1`] = `
+[
+  {
+    "height": 8,
+    "pointer": "nw-resize",
+    "resizeDirection": 5,
+    "width": 8,
+    "x": 96,
+    "y": 96,
+  },
+  {
+    "height": 8,
+    "pointer": "n-resize",
+    "resizeDirection": 1,
+    "width": 8,
+    "x": 146,
+    "y": 96,
+  },
+  {
+    "height": 8,
+    "pointer": "ne-resize",
+    "resizeDirection": 9,
+    "width": 8,
+    "x": 196,
+    "y": 96,
+  },
+  {
+    "height": 8,
+    "pointer": "w-resize",
+    "resizeDirection": 4,
+    "width": 8,
+    "x": 96,
+    "y": 146,
+  },
+  {
+    "height": 8,
+    "pointer": "e-resize",
+    "resizeDirection": 8,
+    "width": 8,
+    "x": 196,
+    "y": 146,
+  },
+  {
+    "height": 8,
+    "pointer": "sw-resize",
+    "resizeDirection": 6,
+    "width": 8,
+    "x": 96,
+    "y": 196,
+  },
+  {
+    "height": 8,
+    "pointer": "s-resize",
+    "resizeDirection": 2,
+    "width": 8,
+    "x": 146,
+    "y": 196,
+  },
+  {
+    "height": 8,
+    "pointer": "se-resize",
+    "resizeDirection": 10,
+    "width": 8,
+    "x": 196,
+    "y": 196,
+  },
+]
+`;
+
+exports[`mini squares in the own selection get mini squares 2`] = `
+[
+  {
+    "height": 8,
+    "pointer": "se-resize",
+    "resizeDirection": 5,
+    "width": 8,
+    "x": -104,
+    "y": -104,
+  },
+  {
+    "height": 8,
+    "pointer": "s-resize",
+    "resizeDirection": 1,
+    "width": 8,
+    "x": -154,
+    "y": -104,
+  },
+  {
+    "height": 8,
+    "pointer": "sw-resize",
+    "resizeDirection": 9,
+    "width": 8,
+    "x": -204,
+    "y": -104,
+  },
+  {
+    "height": 8,
+    "pointer": "e-resize",
+    "resizeDirection": 4,
+    "width": 8,
+    "x": -104,
+    "y": -154,
+  },
+  {
+    "height": 8,
+    "pointer": "w-resize",
+    "resizeDirection": 8,
+    "width": 8,
+    "x": -204,
+    "y": -154,
+  },
+  {
+    "height": 8,
+    "pointer": "ne-resize",
+    "resizeDirection": 6,
+    "width": 8,
+    "x": -104,
+    "y": -204,
+  },
+  {
+    "height": 8,
+    "pointer": "n-resize",
+    "resizeDirection": 2,
+    "width": 8,
+    "x": -154,
+    "y": -204,
+  },
+  {
+    "height": 8,
+    "pointer": "nw-resize",
+    "resizeDirection": 10,
+    "width": 8,
+    "x": -204,
+    "y": -204,
+  },
+]
+`;

@@ -24,6 +24,7 @@ import CursorsPresence from "../_components/CursorsPresence";
 import { useCanvas } from "../CanvasContext";
 import { Grid } from "./Grid";
 import OwnSelection from "../_components/OwnSelected";
+import { resizeLayer } from "@/lib/utils";
 
 const ZOOM_SPEED = 1.1;
 const MAX_ZOOM = 3;
@@ -42,7 +43,7 @@ const getAbsolutePointerPos = (stage: StageType | null) => {
 };
 
 const Canvas = () => {
-  const { canvasState } = useCanvas();
+  const { canvasState, setCanvasState } = useCanvas();
 
   const [camera, setCamera] = useState<Camera>({
     x: 0,
@@ -53,7 +54,7 @@ const Canvas = () => {
   const [newLayer, setNewLayer] = useState<TLayer | null>(null);
 
   const insertLayer = useMutation(({ storage }, layer: TLayer) => {
-    storage.get("layers").push(new LiveObject(layer));
+    storage.get("layers").set(layer.id, new LiveObject(layer));
   }, []);
 
   const handleWheel = useCallback((e: KonvaEventObject<WheelEvent>) => {
@@ -86,6 +87,12 @@ const Canvas = () => {
     [],
   );
 
+  const layers = useStorage((storage) => Array.from(storage.layers.values()));
+
+  const changeLayer = useMutation(({ storage }, layer) => {
+    storage.get("layers").set(layer.id, layer);
+  }, []);
+
   const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {
     const pointerPos = getAbsolutePointerPos(e.target.getStage());
 
@@ -101,6 +108,16 @@ const Canvas = () => {
             },
         );
       }
+      if (canvasState.mode === CanvasMode.Resizing) {
+        const selectedLayer = layers.find(
+          (layer) => layer.id === canvasState.layerId,
+        );
+        if (selectedLayer) {
+          changeLayer(
+            resizeLayer(canvasState.direction, selectedLayer, pointerPos),
+          );
+        }
+      }
     }
   };
 
@@ -115,14 +132,13 @@ const Canvas = () => {
     shallow,
   );
 
-  const layers = useStorage((storage) => storage.layers);
-
   const handleLayerClick = useMutation(
     (
       { setMyPresence, self },
       layerId: string,
       e: KonvaEventObject<MouseEvent>,
     ) => {
+      e.cancelBubble = true;
       setMyPresence(
         e.evt.shiftKey
           ? { selection: [...self.presence.selection, layerId] }
@@ -134,21 +150,29 @@ const Canvas = () => {
     [],
   );
 
+  const removeSelection = useMutation(({ setMyPresence }) => {
+    setMyPresence({ selection: [] });
+  }, []);
+
   return (
     <Stage
       width={innerWidth}
       height={innerHeight}
-      draggable
-      onContextMenu={(e) => e.evt.preventDefault()}
+      draggable={false}
+      onContextMenu={({ evt }) => evt.preventDefault()}
       scale={{ x: camera.zoom, y: camera.zoom }}
       x={camera.x}
       y={camera.y}
-      onClick={(e) => e.evt.preventDefault()}
       onDragMove={(e) => {
-        setCamera((prev) => ({ ...prev, x: e.target.x(), y: e.target.y() }));
+        if (canvasState.mode !== CanvasMode.Resizing) {
+          setCamera((prev) => ({ ...prev, x: e.target.x(), y: e.target.y() }));
+        }
       }}
       onMouseMove={handleMouseMove}
       onMouseDown={(e) => {
+        if (canvasState.mode === CanvasMode.None) {
+          removeSelection();
+        }
         if (e.evt.buttons === 4 || e.evt.buttons === 2) e.target.startDrag();
 
         if (e.evt.buttons === 1) {
@@ -173,6 +197,10 @@ const Canvas = () => {
         }
       }}
       onMouseUp={() => {
+        if (canvasState.mode === CanvasMode.Resizing) {
+          setCanvasState({ mode: CanvasMode.None });
+          document.body.style.cursor = "default";
+        }
         if (canvasState.mode === CanvasMode.Inserting && newLayer) {
           insertLayer(newLayer);
           setNewLayer(null);

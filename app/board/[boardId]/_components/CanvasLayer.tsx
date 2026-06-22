@@ -29,7 +29,6 @@ const CanvasLayer: FC<Props> = ({
           fill={fill}
           strokeWidth={2}
           onClick={handleLayerClick}
-          draggable
         />
       );
     case CanvasLayerEnum.Ellipse:

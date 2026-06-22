@@ -20,6 +20,14 @@ export enum CanvasMode {
   Selecting,
   Inserting,
   Pencil,
+  Resizing,
+}
+
+export enum ResizeSide {
+  Top = 0b0001,
+  Bottom = 0b0010,
+  Left = 0b0100,
+  Right = 0b1000,
 }
 
 export type CanvasState =
@@ -30,6 +38,14 @@ export type CanvasState =
       mode: CanvasMode.Selecting;
     }
   | { mode: CanvasMode.Pencil }
+  | {
+      mode: CanvasMode.Resizing;
+      /**
+       * direction - a bitmask compatible with the {@link ResizeSide} enum
+       */
+      direction: number;
+      layerId: string;
+    }
   | { mode: CanvasMode.Inserting; layer: CanvasLayer };
 
 export interface Camera {

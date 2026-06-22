@@ -1,4 +1,4 @@
-import type { LiveList, LiveObject } from "@liveblocks/node";
+import type { LiveMap, LiveObject } from "@liveblocks/node";
 import type { TLayer } from "@/types/canvas";
 
 //
@@ -16,7 +16,8 @@ declare global {
 
     // The Storage tree for the room, for useMutation, useStorage, etc.
     Storage: {
-      layers: LiveList<LiveObject<TLayer>>;
+      // layers: LiveList<LiveObject<TLayer>>;
+      layers: LiveMap<string, LiveObject<TLayer>>;
       // Example, a conflict-free list
       // animals: LiveList<string>;
     };

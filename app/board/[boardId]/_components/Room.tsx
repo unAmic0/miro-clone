@@ -1,7 +1,7 @@
 "use client";
 
 import { random } from "@ctrl/tinycolor";
-import { LiveList } from "@liveblocks/node";
+import { LiveMap } from "@liveblocks/node";
 import {
   ClientSideSuspense,
   LiveblocksProvider,
@@ -14,7 +14,7 @@ const Room = ({ children, id }: { children: ReactNode; id: string }) => {
   return (
     <LiveblocksProvider authEndpoint="/api/liveblocks-auth" throttle={16}>
       <RoomProvider
-        initialStorage={{ layers: new LiveList([]) }}
+        initialStorage={{ layers: new LiveMap() }}
         initialPresence={{
           cursor: null,
           presenceColor: random().toHexString(),

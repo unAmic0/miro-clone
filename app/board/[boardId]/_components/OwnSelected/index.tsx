@@ -2,16 +2,19 @@
 
 import { useSelf, useStorage } from "@liveblocks/react/suspense";
 import { Group, Rect } from "react-konva";
-import { setCursor } from "@/lib/utils";
 import { getMiniSquares } from "./getMiniSquares";
+import { useCanvas } from "@/app/board/[boardId]/CanvasContext";
+import { CanvasMode } from "@/types/canvas";
 
 const OwnSelection = () => {
+  const { setCanvasState, canvasState } = useCanvas();
+
   const {
     presence: { selection },
   } = useSelf();
 
   const selectedLayer = useStorage((storage) =>
-    storage.layers.find((layer) => layer.id === selection[0]),
+    storage.layers.get(selection[0]),
   );
 
   if (!selectedLayer) return;
@@ -39,6 +42,15 @@ const OwnSelection = () => {
       {miniSquares.map((miniSquare, i) => {
         return (
           <Rect
+            onMouseDown={(e) => {
+              e.cancelBubble = true;
+              e.evt.stopPropagation();
+              setCanvasState({
+                mode: CanvasMode.Resizing,
+                direction: miniSquare.resizeDirection,
+                layerId: selectedLayer.id,
+              });
+            }}
             key={`#miniSquare${i}`}
             x={miniSquare.x}
             y={miniSquare.y}
@@ -47,8 +59,16 @@ const OwnSelection = () => {
             strokeWidth={2}
             stroke={"#023e8a"}
             fill={"white"}
-            onMouseEnter={(e) => setCursor(e, miniSquare.pointer)}
-            onMouseLeave={(e) => setCursor(e, "default")}
+            onMouseEnter={() => {
+              document.body.style.cursor = miniSquare.pointer;
+            }}
+            onMouseLeave={() => {
+              // during the resizing the cursor is moving faster that the miniSquare,
+              // so it's to avoid cursor blinking
+              if (canvasState.mode !== CanvasMode.Resizing) {
+                document.body.style.cursor = "default";
+              }
+            }}
           />
         );
       })}
