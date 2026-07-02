@@ -13,9 +13,7 @@ const OwnSelection = () => {
     presence: { selection },
   } = useSelf();
 
-  const selectedLayer = useStorage((storage) =>
-    storage.layers.get(selection[0]),
-  );
+  const selectedLayer = useStorage((storage) => storage.layers[selection[0]]);
 
   if (!selectedLayer) return;
 

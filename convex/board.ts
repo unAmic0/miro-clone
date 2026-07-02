@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { z } from "zod";
-import { safeString, safeId } from "./validators";
+import { safeString, safeId } from "@/utils/validators";
 
 export const get = query({
   args: {
@@ -66,7 +66,7 @@ export const rename = mutation({
     title: v.string(),
   },
   handler: async (ctx, { id, title }) => {
-    const identity = ctx.auth.getUserIdentity();
+    const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("Unauthorized");
 
     try {

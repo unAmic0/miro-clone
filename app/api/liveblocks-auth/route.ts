@@ -27,6 +27,8 @@ export async function POST(req: NextRequest) {
 
   if (!authorization || !user)
     return new NextResponse("Unauthorized", { status: 401 });
+  if (!user.primaryEmailAddress)
+    return new NextResponse("Email address is missing", { status: 422 });
 
   const room = parsed.data.room as Id<"boards">;
   const board = await convex.query(api.board.get, { id: room });
@@ -35,12 +37,12 @@ export async function POST(req: NextRequest) {
     return new NextResponse("Unauthorized", { status: 401 });
 
   const userInfo = {
-    name: user.username!,
+    // biome-ignore lint/style/noNonNullAssertion: the if condition above (near 30th line)
+    name: (user.username || user.primaryEmailAddress.emailAddress)!,
     picture: user.imageUrl,
   };
 
   const session = liveblocks.prepareSession(user.id, {
-    // TODO: fix
     userInfo,
   });
 

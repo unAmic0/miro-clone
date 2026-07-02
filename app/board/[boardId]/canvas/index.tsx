@@ -87,10 +87,10 @@ const Canvas = () => {
     [],
   );
 
-  const layers = useStorage((storage) => Array.from(storage.layers.values()));
+  const layers = useStorage((storage) => Object.values(storage.layers));
 
   const changeLayer = useMutation(({ storage }, layer) => {
-    storage.get("layers").set(layer.id, layer);
+    storage.get("layers").set(layer.id, new LiveObject(layer));
   }, []);
 
   const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {

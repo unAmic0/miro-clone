@@ -79,7 +79,7 @@ export const BoardList = () => {
               isFavorite={isFavorite}
               imgUrl={imageUrl}
               title={title}
-              key={_creationTime}
+              key={`board ${_id}`}
               id={_id}
               creationTime={_creationTime}
               authorId={authorId}

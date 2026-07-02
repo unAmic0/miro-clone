@@ -3,7 +3,7 @@
 import type Konva from "konva";
 import type { Vector2d } from "konva/lib/types";
 import { type FC, useEffect, useRef } from "react";
-import { Group, Layer, Path, Text } from "react-konva";
+import { Group, Path, Text } from "react-konva";
 
 interface Props {
   color: string;
