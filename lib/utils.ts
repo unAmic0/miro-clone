@@ -1,6 +1,5 @@
 import type { TLayer } from "@/types/canvas";
 import { type ClassValue, clsx } from "clsx";
-import type { KonvaEventObject } from "konva/lib/Node";
 import type { Vector2d } from "konva/lib/types";
 import { twMerge } from "tailwind-merge";
 import { ResizeSide } from "@/types/canvas";

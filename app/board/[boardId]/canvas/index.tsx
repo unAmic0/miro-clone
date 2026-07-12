@@ -11,7 +11,7 @@ import type { KonvaEventObject } from "konva/lib/Node";
 import type { Stage as StageType } from "konva/lib/Stage";
 import type { Vector2d } from "konva/lib/types";
 import { nanoid } from "nanoid";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Layer, Stage } from "react-konva";
 import {
   type Camera,
@@ -87,7 +87,10 @@ const Canvas = () => {
     [],
   );
 
-  const layers = useStorage((storage) => Object.values(storage.layers));
+  const layers = useStorage(
+    (storage) => Object.values(storage.layers),
+    shallow,
+  );
 
   const changeLayer = useMutation(({ storage }, layer) => {
     storage.get("layers").set(layer.id, new LiveObject(layer));
@@ -97,7 +100,6 @@ const Canvas = () => {
     const pointerPos = getAbsolutePointerPos(e.target.getStage());
 
     if (pointerPos) {
-      setCursorPresence(pointerPos);
       if (canvasState.mode === CanvasMode.Inserting && newLayer) {
         setNewLayer(
           (prev) =>
@@ -121,6 +123,24 @@ const Canvas = () => {
     }
   };
 
+  // making cursor visible for other users
+  const stageRef = useRef<StageType>(null);
+  useEffect(() => {
+    const updateCursorPresence = (e: MouseEvent) => {
+      const stage = stageRef.current;
+      if (!stage) return;
+      const rect = stage.container().getBoundingClientRect();
+
+      const pointerPos = {
+        x: (e.clientX - rect.left - stage.x()) / stage.scaleX(),
+        y: (e.clientY - rect.top - stage.y()) / stage.scaleY(),
+      };
+      setCursorPresence(pointerPos);
+    };
+    addEventListener("mousemove", updateCursorPresence);
+    return () => removeEventListener("mousemove", updateCursorPresence);
+  }, [setCursorPresence]);
+
   const selections = useOthers(
     (others) =>
       others.reduce((idsToColorSelection: Record<string, string>, other) => {
@@ -130,6 +150,19 @@ const Canvas = () => {
         return idsToColorSelection;
       }, {}),
     shallow,
+  );
+
+  const handleLayerMove = useMutation(
+    ({ storage }, layer: TLayer, e: KonvaEventObject<DragEvent>) => {
+      storage.get("layers").set(
+        layer.id,
+        new LiveObject({
+          ...layer,
+          position: { x: e.target.x(), y: e.target.y() },
+        }),
+      );
+    },
+    [],
   );
 
   const handleLayerClick = useMutation(
@@ -156,6 +189,7 @@ const Canvas = () => {
 
   return (
     <Stage
+      ref={stageRef}
       width={innerWidth}
       height={innerHeight}
       draggable={false}
@@ -164,6 +198,7 @@ const Canvas = () => {
       x={camera.x}
       y={camera.y}
       onDragMove={(e) => {
+        if (e.target !== e.target.getStage()) return;
         if (canvasState.mode !== CanvasMode.Resizing) {
           setCamera((prev) => ({ ...prev, x: e.target.x(), y: e.target.y() }));
         }
@@ -213,6 +248,7 @@ const Canvas = () => {
         {layers.map((layer) => (
           <CanvasLayer
             handleLayerClick={(e) => handleLayerClick(layer.id, e)}
+            handleDragMove={(e) => handleLayerMove(layer, e)}
             key={layer.id}
             layer={layer}
             selectionColor={selections[layer.id]}
