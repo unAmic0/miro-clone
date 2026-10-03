@@ -189,7 +189,7 @@ Contributions are welcome! Feel free to:
 
 ## 📄 License
 
-MIT License — free to use for learning or building your own apps.
+MIT License, see [LICENSE](./LICENSE) — free to use for learning or building your own apps.
 
 ---
 
