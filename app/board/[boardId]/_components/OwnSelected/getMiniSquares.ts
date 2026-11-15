@@ -1,7 +1,7 @@
 import { ResizeSide } from "@/types/canvas";
 import type { Vector2d } from "konva/lib/types";
 
-const MINI_SQUARE_SIZE = 8;
+export const MINI_SQUARE_SIZE = 8;
 const HALF_MINI_SQUARE_SIZE = MINI_SQUARE_SIZE / 2;
 
 /**

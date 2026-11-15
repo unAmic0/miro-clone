@@ -13,6 +13,8 @@ import type { Vector2d } from "konva/lib/types";
 import { nanoid } from "nanoid";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Layer, Stage } from "react-konva";
+import { resizeLayer } from "@/lib/utils";
+import { useLastUsedColor } from "@/store/useLastUsedColor";
 import {
   type Camera,
   CanvasLayer as CanvasLayerEnum,
@@ -21,16 +23,14 @@ import {
 } from "@/types/canvas";
 import CanvasLayer from "../_components/CanvasLayer";
 import CursorsPresence from "../_components/CursorsPresence";
+import OwnSelection from "../_components/OwnSelected";
+import SelectionTools from "../_components/SelectionTools";
 import { useCanvas } from "../CanvasContext";
 import { Grid } from "./Grid";
-import OwnSelection from "../_components/OwnSelected";
-import { resizeLayer } from "@/lib/utils";
 
 const ZOOM_SPEED = 1.1;
 const MAX_ZOOM = 3;
 const MIN_ZOOM = 0.1;
-// todo: change later
-const lastSelectedColor = "red";
 
 const getAbsolutePointerPos = (stage: StageType | null) => {
   const pointerPos = stage?.getPointerPosition();
@@ -44,6 +44,9 @@ const getAbsolutePointerPos = (stage: StageType | null) => {
 
 const Canvas = () => {
   const { canvasState, setCanvasState } = useCanvas();
+
+  // set by the layer color tool, so a recolored layer's color is reused
+  const lastUsedColor = useLastUsedColor((state) => state.color);
 
   const [camera, setCamera] = useState<Camera>({
     x: 0,
@@ -172,6 +175,14 @@ const Canvas = () => {
       e: KonvaEventObject<MouseEvent>,
     ) => {
       e.cancelBubble = true;
+
+      // A click on the selected layer deselects it. Konva doesn't fire a click after
+      // a drag, so this never happens while the user is moving the layer
+      if (!e.evt.shiftKey && self.presence.selection.includes(layerId)) {
+        setMyPresence({ selection: [] });
+        return;
+      }
+
       setMyPresence(
         e.evt.shiftKey
           ? { selection: [...self.presence.selection, layerId] }
@@ -183,82 +194,103 @@ const Canvas = () => {
     [],
   );
 
-  const removeSelection = useMutation(({ setMyPresence }) => {
-    setMyPresence({ selection: [] });
-  }, []);
+  /**
+   * @param pressedLayerId - id of the layer under the pointer, if any. The selection
+   * is kept when it is already selected: the user is about to move it
+   */
+  const removeSelection = useMutation(
+    ({ setMyPresence, self }, pressedLayerId?: string) => {
+      if (pressedLayerId && self.presence.selection.includes(pressedLayerId)) {
+        return;
+      }
+      setMyPresence({ selection: [] });
+    },
+    [],
+  );
 
   return (
-    <Stage
-      ref={stageRef}
-      width={innerWidth}
-      height={innerHeight}
-      draggable={false}
-      onContextMenu={({ evt }) => evt.preventDefault()}
-      scale={{ x: camera.zoom, y: camera.zoom }}
-      x={camera.x}
-      y={camera.y}
-      onDragMove={(e) => {
-        if (e.target !== e.target.getStage()) return;
-        if (canvasState.mode !== CanvasMode.Resizing) {
-          setCamera((prev) => ({ ...prev, x: e.target.x(), y: e.target.y() }));
-        }
-      }}
-      onMouseMove={handleMouseMove}
-      onMouseDown={(e) => {
-        if (canvasState.mode === CanvasMode.None) {
-          removeSelection();
-        }
-        if (e.evt.buttons === 4 || e.evt.buttons === 2) e.target.startDrag();
+    // the container has the same origin as the stage, so the HTML overlays
+    // (SelectionTools) can be positioned with the camera. overflow-hidden keeps
+    // the overlays that are outside of the viewport from creating scrollbars
+    <div className="relative overflow-hidden">
+      <Stage
+        ref={stageRef}
+        width={innerWidth}
+        height={innerHeight}
+        draggable={false}
+        onContextMenu={({ evt }) => evt.preventDefault()}
+        scale={{ x: camera.zoom, y: camera.zoom }}
+        x={camera.x}
+        y={camera.y}
+        onDragMove={(e) => {
+          if (e.target !== e.target.getStage()) return;
+          if (canvasState.mode !== CanvasMode.Resizing) {
+            setCamera((prev) => ({
+              ...prev,
+              x: e.target.x(),
+              y: e.target.y(),
+            }));
+          }
+        }}
+        onMouseMove={handleMouseMove}
+        onMouseDown={(e) => {
+          if (canvasState.mode === CanvasMode.None) {
+            // the id is empty when the press is not on a layer (the canvas itself)
+            removeSelection(e.target.id());
+          }
+          if (e.evt.buttons === 4 || e.evt.buttons === 2) e.target.startDrag();
 
-        if (e.evt.buttons === 1) {
-          if (canvasState.mode !== CanvasMode.None) {
-            e.target.stopDrag();
+          if (e.evt.buttons === 1) {
+            if (canvasState.mode !== CanvasMode.None) {
+              e.target.stopDrag();
+            }
+            if (
+              canvasState.mode === CanvasMode.Inserting &&
+              (canvasState.layer === CanvasLayerEnum.Rectangle ||
+                canvasState.layer === CanvasLayerEnum.Ellipse)
+            ) {
+              // todo: fix later
+              setNewLayer({
+                id: nanoid(),
+                layerType: canvasState.layer,
+                position: getAbsolutePointerPos(e.target.getStage())!,
+                width: 0,
+                height: 0,
+                fill: lastUsedColor,
+              });
+            }
           }
-          if (
-            canvasState.mode === CanvasMode.Inserting &&
-            (canvasState.layer === CanvasLayerEnum.Rectangle ||
-              canvasState.layer === CanvasLayerEnum.Ellipse)
-          ) {
-            // todo: fix later
-            setNewLayer({
-              id: nanoid(),
-              layerType: canvasState.layer,
-              position: getAbsolutePointerPos(e.target.getStage())!,
-              width: 0,
-              height: 0,
-              fill: lastSelectedColor,
-            });
+        }}
+        onMouseUp={() => {
+          if (canvasState.mode === CanvasMode.Resizing) {
+            setCanvasState({ mode: CanvasMode.None });
+            document.body.style.cursor = "default";
           }
-        }
-      }}
-      onMouseUp={() => {
-        if (canvasState.mode === CanvasMode.Resizing) {
-          setCanvasState({ mode: CanvasMode.None });
-          document.body.style.cursor = "default";
-        }
-        if (canvasState.mode === CanvasMode.Inserting && newLayer) {
-          insertLayer(newLayer);
-          setNewLayer(null);
-        }
-      }}
-      onWheel={handleWheel}
-    >
-      <Layer>
-        <Grid camera={camera} width={innerWidth} height={innerHeight} />
-        {layers.map((layer) => (
-          <CanvasLayer
-            handleLayerClick={(e) => handleLayerClick(layer.id, e)}
-            handleDragMove={(e) => handleLayerMove(layer, e)}
-            key={layer.id}
-            layer={layer}
-            selectionColor={selections[layer.id]}
-          />
-        ))}
-        {newLayer && <CanvasLayer layer={newLayer} />}
-        <OwnSelection />
-        <CursorsPresence />
-      </Layer>
-    </Stage>
+          if (canvasState.mode === CanvasMode.Inserting && newLayer) {
+            insertLayer(newLayer);
+            setNewLayer(null);
+          }
+        }}
+        onWheel={handleWheel}
+      >
+        <Layer>
+          <Grid camera={camera} width={innerWidth} height={innerHeight} />
+          {layers.map((layer) => (
+            <CanvasLayer
+              handleLayerClick={(e) => handleLayerClick(layer.id, e)}
+              handleDragMove={(e) => handleLayerMove(layer, e)}
+              key={layer.id}
+              layer={layer}
+              selectionColor={selections[layer.id]}
+            />
+          ))}
+          {newLayer && <CanvasLayer layer={newLayer} />}
+          <OwnSelection />
+          <CursorsPresence />
+        </Layer>
+      </Stage>
+      <SelectionTools camera={camera} />
+    </div>
   );
 };
 

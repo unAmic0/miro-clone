@@ -28,7 +28,11 @@ const OwnSelection = () => {
 
   return (
     <Group>
+      {/* only a visual frame: it lies over the layer, and without
+          listening={false} it would catch the clicks and drags meant for the layer
+          (the resize handles below stay interactive) */}
       <Rect
+        listening={false}
         x={position.x}
         y={position.y}
         width={width}

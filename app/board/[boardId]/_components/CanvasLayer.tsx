@@ -12,7 +12,7 @@ interface Props {
 }
 
 const CanvasLayer: FC<Props> = ({
-  layer: { layerType, width, height, fill, position },
+  layer: { id, layerType, width, height, fill, position },
   handleLayerClick,
   selectionColor,
   handleDragMove,
@@ -22,6 +22,8 @@ const CanvasLayer: FC<Props> = ({
     case CanvasLayerEnum.Rectangle:
       return (
         <Rect
+          // lets the stage find out which layer was pressed (e.target.id())
+          id={id}
           draggable
           x={position.x}
           y={position.y}
@@ -38,6 +40,7 @@ const CanvasLayer: FC<Props> = ({
     case CanvasLayerEnum.Ellipse:
       return (
         <Ellipse
+          id={id}
           draggable
           x={position.x}
           y={position.y}
