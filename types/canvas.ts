@@ -13,6 +13,15 @@ export type TLayer = {
   width: number;
   height: number;
   fill: string;
+  /**
+   * Stacking order: the bigger the number, the closer the layer is to the top
+   * (and the later it is painted). It is a number rather than the position in
+   * the storage map, because a `LiveMap` doesn't guarantee the order of its
+   * keys, so the panels that reorder layers couldn't rely on it.
+   *
+   * Layers created before this field existed don't have it: read it as `?? 0`.
+   */
+  zIndex: number;
 };
 
 export enum CanvasMode {

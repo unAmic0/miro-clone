@@ -13,6 +13,7 @@ import type { Vector2d } from "konva/lib/types";
 import { nanoid } from "nanoid";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Layer, Stage } from "react-konva";
+import { sortByZIndex } from "@/lib/layerOrder";
 import { resizeLayer } from "@/lib/utils";
 import { useLastUsedColor } from "@/store/useLastUsedColor";
 import {
@@ -90,8 +91,9 @@ const Canvas = () => {
     [],
   );
 
+  // painted bottom first: `zIndex` decides the stack, see <LayerOrder>
   const layers = useStorage(
-    (storage) => Object.values(storage.layers),
+    (storage) => sortByZIndex(Object.values(storage.layers)),
     shallow,
   );
 
@@ -257,6 +259,8 @@ const Canvas = () => {
                 width: 0,
                 height: 0,
                 fill: lastUsedColor,
+                // on top of everything that exists right now
+                zIndex: layers.length,
               });
             }
           }

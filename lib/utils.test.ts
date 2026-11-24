@@ -10,6 +10,7 @@ describe("layer resizing", () => {
     width: 200,
     height: 200,
     fill: "blue",
+    zIndex: 0,
     ...overrides,
   });
 

@@ -7,6 +7,7 @@ import { useCanvas } from "../../CanvasContext";
 import ChangeColor from "./ChangeColor";
 import DeleteLayer from "./DeleteLayer";
 import { getToolsPlacement, TOOLS_HEIGHT } from "./getToolsPlacement";
+import LayerOrder from "./LayerOrder";
 
 interface Props {
   camera: Camera;
@@ -63,6 +64,8 @@ const SelectionTools = ({ camera }: Props) => {
         )}
       >
         <ChangeColor layerId={selectedLayer.id} fill={selectedLayer.fill} />
+        <span aria-hidden className="mx-0.5 h-4 w-px bg-neutral-200" />
+        <LayerOrder layerIds={selection} />
         <span aria-hidden className="mx-0.5 h-4 w-px bg-neutral-200" />
         <DeleteLayer layerIds={selection} />
       </div>
